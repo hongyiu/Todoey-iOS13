@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
     
@@ -20,7 +21,17 @@ class CategoryViewController: SwipeTableViewController {
         super.viewDidLoad()
         
         loadCategories()
+        
+        tableView.separatorStyle = .none
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let navBar = navigationController?.navigationBar else {fatalError("Navigation controller does not exist.")}
+            
+            navBar.backgroundColor = UIColor(hexString: "1D9BF6")
     }
     
     //MARK: - TableView Datasource Methods
@@ -32,8 +43,21 @@ class CategoryViewController: SwipeTableViewController {
 
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Category add yet"
-
+        if let category = categories?[indexPath.row] {
+            cell.textLabel?.text = category.name
+            
+            guard let categoryColour = UIColor(hexString: category.colour) else {fatalError("Fail to set category colour")}
+            
+            cell.backgroundColor = categoryColour
+            cell.textLabel?.textColor = ContrastColorOf(categoryColour, returnFlat: true)
+        } else {
+            cell.textLabel?.text = "No Category add yet"
+            
+            guard let defaultColour = UIColor(hexString: "1D9BF6") else {fatalError("Fail to set category default colour")}
+            cell.backgroundColor = defaultColour
+            cell.textLabel?.textColor = ContrastColorOf(defaultColour, returnFlat: true)
+        }
+        
         return cell
     }
     
@@ -96,9 +120,13 @@ class CategoryViewController: SwipeTableViewController {
         
         let action = UIAlertAction(title: "Add ", style: .default) {action in
             if let text = textField.text {
-                let newCategory = Category()
-                newCategory.name = text
-                self.save(category: newCategory)            }
+                if text != "" {
+                    let newCategory = Category()
+                    newCategory.name = text
+                    newCategory.colour = UIColor.randomFlat().hexValue()
+                    self.save(category: newCategory)
+                }
+            }
         }
         
         alert.addTextField() {alertTextField in
