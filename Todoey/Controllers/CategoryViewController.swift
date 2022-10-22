@@ -118,7 +118,9 @@ class CategoryViewController: SwipeTableViewController {
         
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "Add ", style: .default) {action in
+        let cancelButton = UIAlertAction(title: "Cancel", style: .default)
+        
+        let addButton = UIAlertAction(title: "Add ", style: .default) {action in
             if let text = textField.text {
                 if text != "" {
                     let newCategory = Category()
@@ -133,7 +135,8 @@ class CategoryViewController: SwipeTableViewController {
             alertTextField.placeholder = "Create new category"
             textField = alertTextField
         }
-        alert.addAction(action)
+        alert.addAction(cancelButton)
+        alert.addAction(addButton)
         present(alert, animated: true)
     }
 

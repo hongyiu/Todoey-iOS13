@@ -103,18 +103,22 @@ class TodoListViewController: SwipeTableViewController {
         
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         
-        let action = UIAlertAction(title: "Add Item", style: .default) { action in
+        let cancelButton = UIAlertAction(title: "Cancel", style: .default)
+        
+        let addButton = UIAlertAction(title: "Add Item", style: .default) { action in
             //what will happen once the user clickes the add item button on UIAlert
             if let text = textField.text, let currentCategory = self.selectedCategory {
-                do {
-                    try self.realm.write({
-                        let newItem = Item()
-                        newItem.title = text
-                        newItem.dateCreated = Date()
-                        currentCategory.items.append(newItem)
-                    })
-                } catch {
-                    print("Error saving context, \(error)")
+                if text != "" {
+                    do {
+                        try self.realm.write({
+                            let newItem = Item()
+                            newItem.title = text
+                            newItem.dateCreated = Date()
+                            currentCategory.items.append(newItem)
+                        })
+                    } catch {
+                        print("Error saving context, \(error)")
+                    }
                 }
             }
             self.tableView.reloadData()
@@ -124,7 +128,8 @@ class TodoListViewController: SwipeTableViewController {
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
         }
-        alert.addAction(action)
+        alert.addAction(cancelButton)
+        alert.addAction(addButton)
         present(alert, animated: true)
     }
     //
